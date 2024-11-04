@@ -1,54 +1,44 @@
 // src/fields/DateRange.tsx
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { FieldProps } from "payload/types";
 
-type DateRangeProps = {
-  value?: { startDate: string | null; endDate: string | null };
-  onChange: (value: {
-    startDate: string | null;
-    endDate: string | null;
-  }) => void;
-};
-
-const DateRange: React.FC<DateRangeProps> = ({
-  value = { startDate: null, endDate: null },
-  onChange,
-}) => {
+const DateRange: React.FC<FieldProps> = ({ data, onChange }) => {
   const [startDate, setStartDate] = useState<Date | null>(
-    value?.startDate ? new Date(value.startDate) : null
+    data?.startDate ? new Date(data.startDate) : null
   );
   const [endDate, setEndDate] = useState<Date | null>(
-    value?.endDate ? new Date(value.endDate) : null
+    data?.endDate ? new Date(data.endDate) : null
   );
 
-  // useCallback ensures a stable reference which aids with optimization & prevents infinite rerenders
-  const handleChange = useCallback((date: Date | null, name: string) => {
-    if (name === "startDate") {
+  const handleStartDateChange = useCallback(
+    (date) => {
       setStartDate(date);
-    } else {
+      onChange({
+        ...data, // Include existing data (important for other fields in the document).
+        startDate: date,
+      }); // Call onChange to let Payload know about changes
+    },
+    [onChange, data]
+  );
+
+  const handleEndDateChange = useCallback(
+    (date) => {
       setEndDate(date);
-    }
-  }, []);
-
-  // useCallback ensures a stable reference which aids with optimization & prevents infinite rerenders
-
-  const handleOnChange = useCallback(() => {
-    onChange({
-      startDate: startDate ? startDate.toISOString() : null,
-      endDate: endDate ? endDate.toISOString() : null,
-    });
-  }, [startDate, endDate, onChange]);
-
-  useEffect(() => {
-    handleOnChange();
-  }, [startDate, endDate, handleOnChange]);
+      onChange({
+        ...data,
+        endDate: date,
+      });
+    },
+    [onChange, data]
+  );
 
   return (
     <div>
       <DatePicker
         selected={startDate}
-        onChange={(date) => handleChange(date, "startDate")}
+        onChange={handleStartDateChange}
         showTimeSelect
         timeFormat="HH:mm"
         timeIntervals={15}
@@ -57,7 +47,7 @@ const DateRange: React.FC<DateRangeProps> = ({
       />
       <DatePicker
         selected={endDate}
-        onChange={(date) => handleChange(date, "endDate")}
+        onChange={handleEndDateChange}
         showTimeSelect
         timeFormat="HH:mm"
         timeIntervals={15}
