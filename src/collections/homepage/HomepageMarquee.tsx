@@ -21,29 +21,29 @@ const HomepageMarquee: CollectionConfig = {
       required: true,
     },
     {
-      name: "startDate", // New field
-      type: "date",
-      admin: {
-        hidden: true, // Hide this in the main interface since DateRange will handle it
-      },
-    },
-    {
-      name: "endDate", // New field
-      type: "date",
-      admin: {
-        hidden: true, // Hide this in the main interface since DateRange will handle it
-      },
-    },
-    {
-      name: "dateRange",
+      name: "dateRange", // This must match the name property in the DateRange component's value prop
       type: "ui",
       admin: {
         components: {
           Field: DateRange,
         },
       },
-
       label: "Date Range",
+    },
+    // The startDate and endDate fields MUST be nested under the dateRange field
+    {
+      name: "startDate",
+      type: "date",
+      admin: {
+        hidden: true,
+      },
+    },
+    {
+      name: "endDate",
+      type: "date",
+      admin: {
+        hidden: true,
+      },
     },
   ],
 };
