@@ -1,10 +1,17 @@
-// src/fields/DateRange.tsx
 import React, { useState, useCallback } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { FieldProps } from "payload/types";
 
-const DateRange: React.FC<FieldProps> = ({ data, onChange }) => {
+// Define the Props type manually for Payload v2 compatibility
+type DateRangeProps = {
+  data?: {
+    startDate: Date | null | string; // Updated for correct typing - either ISO string or null
+    endDate: Date | null | string; // Updated for correct typing
+  };
+  onChange: (data: any) => void; // 'any' is fine in Payload v2 where types are not as strict
+};
+
+const DateRange: React.FC<DateRangeProps> = ({ data, onChange }) => {
   const [startDate, setStartDate] = useState<Date | null>(
     data?.startDate ? new Date(data.startDate) : null
   );
