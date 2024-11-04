@@ -1,5 +1,4 @@
 import { CollectionConfig } from "payload/types";
-import DateRange from "../../fields/DateRange";
 
 const HomepageMarquee: CollectionConfig = {
   slug: "homepage-marquee",
@@ -19,25 +18,6 @@ const HomepageMarquee: CollectionConfig = {
       label: "Marquee Text",
       type: "richText",
       required: true,
-    },
-    {
-      name: "startDate",
-      type: "date",
-      label: "Start Date",
-      admin: {
-        components: {
-          Field: DateRange,
-        },
-      },
-    },
-    {
-      name: "endDate",
-      type: "date",
-      label: "End Date",
-
-      admin: {
-        condition: (_, siblingData) => siblingData?.startDate,
-      },
     },
   ],
 };
