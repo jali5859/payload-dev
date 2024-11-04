@@ -1,0 +1,8 @@
+build
+dist
+/media
+node_modules
+.DS_Store
+.env
+omega_generate.py
+ai_output.json

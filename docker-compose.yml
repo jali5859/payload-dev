@@ -1,0 +1,17 @@
+version: '3'
+services:
+  payload:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: payloadcms-dev-container
+    ports:
+      - '4500:3000'
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PAYLOAD_SECRET=${PAYLOAD_SECRET}
+      - DATABASE_URI=${DATABASE_URI}
+    restart: unless-stopped

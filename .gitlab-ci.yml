@@ -1,0 +1,36 @@
+variables:
+  DOCKER_HOST: "ssh://jali@192.168.1.56"
+  CONTAINER_NAME: "payloadcms-dev-container"
+
+stages:
+  - deploy
+
+deploy:
+  stage: deploy
+  image: docker:latest
+  tags:
+    - deploy
+  services:
+    - docker:dind
+  before_script:
+    - apk add --no-cache openssh-client rsync
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | base64 -d > /tmp/deploy_key
+    - chmod 600 /tmp/deploy_key
+    - ssh-add /tmp/deploy_key
+    - mkdir -p ~/.ssh
+    - echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - echo "$ENV_FILE_CONTENT" > .env
+  script:
+    - ssh -i /tmp/deploy_key jali@192.168.1.56 "mkdir -p /home/jali/docker/payloadcms/payload-dev"
+    - rsync -avz -e "ssh -i /tmp/deploy_key" . jali@192.168.1.56:/home/jali/docker/payloadcms/payload-dev/
+    - |
+      ssh -i /tmp/deploy_key jali@192.168.1.56 "
+        cd /home/jali/docker/payloadcms/payload-dev
+        docker-compose down
+        docker-compose build --no-cache
+        docker-compose up -d
+      "
+  only:
+    - develop
